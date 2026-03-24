@@ -6,12 +6,13 @@ WEBHOOK_URL = "https://discord.com/api/webhooks/1485962823250215004/2llIF6XkFAKS
 
 URL = "https://kyotocity.bus-navigation.jp/wgsys/wgs_kyt/updateApproachGuidance.htm"
 
-last_seen = None
+session = requests.Session()
 
 headers = {
     "User-Agent": "Mozilla/5.0",
     "X-Requested-With": "XMLHttpRequest",
-    "Content-Type": "application/x-www-form-urlencoded"
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Referer": "https://kyotocity.bus-navigation.jp/wgsys/wgs_kyt/approachGuidance.htm"
 }
 
 data = {
@@ -23,7 +24,7 @@ data = {
     "routeKeys": "10094,10119_10098,10097_10104,10106_10130_9851_9859,9858_10099_10124,10117,10118,10121_10131",
     "fromDisplayPassNo": "6,16_7,7_18,18_6_32_27,28_11_11,11,11,11_18",
     "toDisplayPassNo": "",
-    "formerApproachGuidance": "2664:1:1",
+    "formerApproachGuidance": "",
     "informationFromTextId": "",
     "informationToTextId": "",
     "routeInfoMessage": "0:false:0:::19700101090000000@0:false:0:::19700101090000000@0:false:0:::19700101090000000@0:false:0:::19700101090000000@0:false:0:::19700101090000000@0:false:0:::19700101090000000@0:false:0:::19700101090000000@0:false:0:::19700101090000000@0:false:0:::19700101090000000@",
@@ -33,19 +34,23 @@ data = {
 }
 
 def send(msg):
-    requests.post(WEBHOOK_URL, json={"content": msg})
+    session.post(WEBHOOK_URL, json={"content": msg})
     print("通知:", msg)
+
+# ★まずトップページを開いてCookie取得
+session.get("https://kyotocity.bus-navigation.jp/wgsys/wgs_kyt/search.htm")
+
+last_seen = None
 
 while True:
     try:
-        data["formerApproachGuidance"] = ""  # ←これ追加
-        
-        res = requests.post(URL, headers=headers, data=data, timeout=5)
+        data["formerApproachGuidance"] = ""
+
+        res = session.post(URL, headers=headers, data=data, timeout=5)
         json_data = res.json()
 
         print("取得:", json_data)
 
-        # JSON全体から検索（まずはこれでOK）
         text = str(json_data)
 
         if TARGET_BUS in text:
