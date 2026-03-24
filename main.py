@@ -1,36 +1,16 @@
-import requests
-import re
-import time
-
-TARGET_BUS = "3043"
-WEBHOOK_URL = "https://discord.com/api/webhooks/1485962823250215004/2llIF6XkFAKSvOVZ23ZNABTAqccSXb966k2HyvRJkBI67tDXewx2Jglw-bngzhT7qBuq"
-
-BASE_URL = "https://kyotocity.bus-navigation.jp/wgsys/wgs_kyt/vehiclePosition.htm"
-
-last_seen = None
-
-def send(msg):
-    requests.post(WEBHOOK_URL, json={"content": msg})
-
-def get_data():
-    params = {
-        "from": "auto",
-        "fromType": "1",
-        "locale": "ja",
-        "fromlat": "34.98",
-        "fromlng": "135.75",
-        "mapFlag": "true"
-    }
-
-    res = requests.get(BASE_URL, params=params)
-    return re.findall(r'(\d{4}:\d+:\d+)', res.text)
-
 while True:
     data = get_data()
 
+    print("取得データ:", data)  # ←これ追加（超重要）
+
     for item in data:
+        print("チェック中:", item)  # ←これも追加
+
         if item.startswith(TARGET_BUS):
+            print("一致した:", item)  # ←ここも
+
             if last_seen != item:
+                print("通知発火！")  # ←確認用
                 send(f"🚌 {TARGET_BUS} 動いた → {item}")
                 last_seen = item
 
