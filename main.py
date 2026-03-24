@@ -30,7 +30,6 @@ while True:
 
     for item in data:
         if item.startswith(TARGET_BUS):
-            global last_seen
             if last_seen != item:
                 send(f"🚌 {TARGET_BUS} 動いた → {item}")
                 last_seen = item
