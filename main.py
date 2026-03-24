@@ -38,6 +38,8 @@ def send(msg):
 
 while True:
     try:
+        data["formerApproachGuidance"] = ""  # ←これ追加
+        
         res = requests.post(URL, headers=headers, data=data, timeout=5)
         json_data = res.json()
 
