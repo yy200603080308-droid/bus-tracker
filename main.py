@@ -2,7 +2,7 @@ import requests
 import re
 import time
 
-TARGET_BUS = "3347"
+TARGET_BUS = "3043"
 WEBHOOK_URL = "https://discord.com/api/webhooks/1485962823250215004/2llIF6XkFAKSvOVZ23ZNABTAqccSXb966k2HyvRJkBI67tDXewx2Jglw-bngzhT7qBuq"
 
 BASE_URL = "https://kyotocity.bus-navigation.jp/wgsys/wgs_kyt/vehiclePosition.htm"
